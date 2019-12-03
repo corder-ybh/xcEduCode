@@ -2,18 +2,33 @@ package com.xuecheng.manage_cms;
 
 import com.xuecheng.framework.domain.cms.CmsPage;
 import com.xuecheng.manage_cms.dao.CmsPageRepository;
+import org.bson.types.ObjectId;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.*;
+import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.RestTemplate;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.Map;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
 public class CmsPageRepositoryTest {
     @Autowired
     CmsPageRepository cmsPageRepository;
+
+    @Autowired
+    RestTemplate restTemplate;
+
+    @Autowired
+    GridFsTemplate gridFsTemplate;
 
     @Test
     public void testFindPage() {
@@ -43,5 +58,25 @@ public class CmsPageRepositoryTest {
         Pageable pageable = new PageRequest(0, 10);
         Page<CmsPage> all = cmsPageRepository.findAll(example, pageable);
         System.out.println(all);
+    }
+
+    @Test
+    public void testRestTemplate() {
+        ResponseEntity<Map> forEntity =
+                restTemplate.getForEntity("http://127.0.0.1:31001/cms/config/getmodel/5a791725dd573c3574ee333f", Map.class);
+        System.out.println(forEntity);
+    }
+
+    @Test
+    public void testGridFs() throws FileNotFoundException {
+        // 要存储的文件
+        File file = new File("e:/index_banner.html");
+        // 定义输入流
+        FileInputStream inputStream = new FileInputStream(file);
+        // 向GridFs存储文件
+        ObjectId objectId = gridFsTemplate.store(inputStream, "轮播图测试文件", "");
+        //得到文件ID
+        String fileID = objectId.toString();
+        System.out.println(file);
     }
 }
