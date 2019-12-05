@@ -2,6 +2,7 @@ package com.xuecheng.manage_cms.service;
 
 import com.xuecheng.framework.domain.cms.CmsTemplate;
 import com.xuecheng.framework.domain.cms.request.QueryTemplateRequest;
+import com.xuecheng.framework.domain.cms.response.CmsTemplateResult;
 import com.xuecheng.framework.model.response.CommonCode;
 import com.xuecheng.framework.model.response.QueryResponseResult;
 import com.xuecheng.framework.model.response.QueryResult;
@@ -64,5 +65,9 @@ public class TemplateService {
             return optional.get();
         }
         return null;
+    }
+
+    public CmsTemplateResult update(String id, CmsTemplate cmsTemplate) {
+        CmsTemplate cmsTemplate1 = this.getById(id);
     }
 }
