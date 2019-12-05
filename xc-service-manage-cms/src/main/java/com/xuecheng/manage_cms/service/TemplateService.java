@@ -67,7 +67,7 @@ public class TemplateService {
         return null;
     }
 
-    public CmsTemplateResult update(String id, CmsTemplate cmsTemplate) {
-        CmsTemplate cmsTemplate1 = this.getById(id);
-    }
+//    public CmsTemplateResult update(String id, CmsTemplate cmsTemplate) {
+//        CmsTemplate cmsTemplate1 = this.getById(id);
+//    }
 }
