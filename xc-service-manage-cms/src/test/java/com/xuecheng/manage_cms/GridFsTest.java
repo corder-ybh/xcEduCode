@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import sun.nio.ch.IOUtil;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -28,7 +29,7 @@ public class GridFsTest {
 
     @Test
     public void queryFile() throws IOException {
-        String fileId = "5a7719d76abb5042987eec3b";
+        String fileId = "5de8b1c86738f31204292de6";
         // 根据id查询文件
         GridFSFile gridFSFile = gridFsTemplate.findOne(Query.query(Criteria.where("_id").is(fileId)));
         // 打开下载流对象
@@ -37,6 +38,11 @@ public class GridFsTest {
         GridFsResource gridFsResource = new GridFsResource(gridFSFile, gridFSDownloadStream);
         // 获取流中的数据
         String s = IOUtils.toString(gridFsResource.getInputStream(), "UTF-8");
+        s = "日日日日日日sssss";
+        // 保存html文件到GridFS
+        InputStream inputStream = IOUtils.toInputStream(s);
+        Object object;
+        object = gridFsTemplate.store(inputStream, "ybh测试.html");
         System.out.println(s);
     }
 }
