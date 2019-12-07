@@ -348,6 +348,12 @@ public class PageService {
         this.rabbitTemplate.convertAndSend(RabbitmqConfig.EX_ROUTING_CMS_POSTPAGE, siteId, msg);
     }
 
+    /**
+     * 将html文件保存到gridfs然后更新CmsPage的htmlFiledId
+     * @param pageId
+     * @param content
+     * @return
+     */
     private CmsPage saveHtml(String pageId, String content) {
         // 查询页面
         Optional<CmsPage> optional = cmsPageRepository.findById(pageId);
