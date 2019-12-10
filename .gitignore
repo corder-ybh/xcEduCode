@@ -27,3 +27,5 @@ xc-service-manage-cms/target/
 xc-service-manage-cms/src/test/resources/application.yml
 xc-service-manage-cms-client/src/main/resources/application.yml
 xc-service-manage-cms-client/target/
+xc-service-manage-course/target/
+xc-service-manage-course/src/main/resources/application.yml
