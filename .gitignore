@@ -30,3 +30,4 @@ xc-service-manage-cms-client/target/
 xc-service-manage-course/target/
 xc-service-manage-course/src/main/resources/application.yml
 application.yml
+xc-service-manage-course/src/main/resources/publickey.txt
