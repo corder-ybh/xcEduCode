@@ -1,5 +1,6 @@
 package com.xuecheng.auth.controller;
 
+import com.xuecheng.api.auth.AuthControllerApi;
 import com.xuecheng.auth.service.AuthService;
 import com.xuecheng.framework.domain.ucenter.ext.AuthToken;
 import com.xuecheng.framework.domain.ucenter.request.LoginRequest;
@@ -7,14 +8,20 @@ import com.xuecheng.framework.domain.ucenter.response.AuthCode;
 import com.xuecheng.framework.domain.ucenter.response.LoginResult;
 import com.xuecheng.framework.exception.ExceptionCast;
 import com.xuecheng.framework.model.response.CommonCode;
+import com.xuecheng.framework.model.response.ResponseResult;
+import com.xuecheng.framework.utils.CookieUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
-public class AuthController {
+public class AuthController implements AuthControllerApi {
 
     @Value("${auth.clientId}")
     String clientId;
@@ -22,6 +29,8 @@ public class AuthController {
     String clientSecret;
     @Value("${auth.cookieDomain}")
     String cookieDomain;
+    @Value("${auth.cookieMaxAge}")
+    int cookieMaxAge;
     @Value("${auth.tokenValiditySeconds}")
     int tokenValiditySeconds;
     @Autowired
@@ -44,5 +53,22 @@ public class AuthController {
         // 将令牌存储到cookie
         saveCookie(access_token);
         return new LoginResult(CommonCode.SUCCESS, access_token);
+    }
+
+    @Override
+    @PostMapping("/userlogout")
+    public ResponseResult logout() {
+        return null;
+    }
+
+    /**
+     * 保存cookie
+     * @param token
+     */
+    private void saveCookie(String token) {
+        HttpServletResponse response = ((ServletRequestAttributes)
+                RequestContextHolder.getRequestAttributes()).getResponse();
+        // 添加cookie认证令牌，最后一个参数设置为false，表示允许浏览器获取
+        CookieUtil.addCookie(response, cookieDomain, "/", "uid", token, cookieMaxAge, false);
     }
 }
