@@ -5,6 +5,7 @@ import com.xuecheng.auth.service.AuthService;
 import com.xuecheng.framework.domain.ucenter.ext.AuthToken;
 import com.xuecheng.framework.domain.ucenter.request.LoginRequest;
 import com.xuecheng.framework.domain.ucenter.response.AuthCode;
+import com.xuecheng.framework.domain.ucenter.response.JwtResult;
 import com.xuecheng.framework.domain.ucenter.response.LoginResult;
 import com.xuecheng.framework.exception.ExceptionCast;
 import com.xuecheng.framework.model.response.CommonCode;
@@ -13,12 +14,15 @@ import com.xuecheng.framework.utils.CookieUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 @RestController
 public class AuthController implements AuthControllerApi {
@@ -55,12 +59,6 @@ public class AuthController implements AuthControllerApi {
         return new LoginResult(CommonCode.SUCCESS, access_token);
     }
 
-    @Override
-    @PostMapping("/userlogout")
-    public ResponseResult logout() {
-        return null;
-    }
-
     /**
      * 保存cookie
      * @param token
@@ -70,5 +68,50 @@ public class AuthController implements AuthControllerApi {
                 RequestContextHolder.getRequestAttributes()).getResponse();
         // 添加cookie认证令牌，最后一个参数设置为false，表示允许浏览器获取
         CookieUtil.addCookie(response, cookieDomain, "/", "uid", token, cookieMaxAge, false);
+    }
+
+    @Override
+    @GetMapping("/userjwt")
+    public JwtResult userjwt(){
+        // 获取cookie中的令牌
+        String access_token = getTokenFromCookie();
+        // 根据令牌从redis查询jwt
+        AuthToken authToken = authService.getUserToken(access_token);
+        if (null == authToken) {
+            return new JwtResult(CommonCode.FAIL, null);
+        }
+        return new JwtResult(CommonCode.SUCCESS, authToken.getJwt_token());
+    }
+
+    /**
+     * 取出cookie中的身份令牌
+     * @return
+     */
+    private String getTokenFromCookie() {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        Map<String, String> cookieMap = CookieUtil.readCookie(request, "uid");
+        String access_token = cookieMap.get("uid");
+        return access_token;
+    }
+
+    @Override
+    @PostMapping("/userlogout")
+    public ResponseResult logout() {
+        // 取出身份令牌
+        String uid = getTokenFromCookie();
+        // 删除redis中的token
+        authService.delToken(uid);
+        // 清除cookie
+        clearCookie(uid);
+        return new ResponseResult(CommonCode.SUCCESS);
+    }
+
+    /**
+     * 从cookie中删除token
+     * @param token
+     */
+    private void clearCookie(String token) {
+        HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
+        CookieUtil.addCookie(response, cookieDomain, "/", "uid", token, 0, false);
     }
 }

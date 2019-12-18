@@ -148,11 +148,49 @@ public class AuthService {
         return authToken;
     }
 
+    /**
+     * basic加密
+     * @param clientId
+     * @param clientSecret
+     * @return
+     */
     private String httpbasic(String clientId, String clientSecret) {
         // 将客户端id和客户端密码拼接，按"客户端id:客户端密码"
         String string = clientId + ":" + clientSecret;
         // 进行base63编码
         byte[] encode = Base64.encode(string.getBytes());
         return "Basic " + new String(encode);
+    }
+
+    /**
+     * 获取用户token
+     * @param token
+     * @return
+     */
+    public AuthToken getUserToken(String token) {
+        String userToken = "user_token:" + token;
+        String userTokenString = stringRedisTemplate.opsForValue().get(userToken);
+        if (null != userToken) {
+            AuthToken authToken = null;
+            try {
+                authToken = JSON.parseObject(userTokenString, AuthToken.class);
+            } catch (Exception e) {
+                LOGGER.error("getUserToken from redis and execute JSON.parseObject error {}", e.getMessage());
+                e.printStackTrace();
+            }
+            return authToken;
+        }
+        return null;
+    }
+
+    /**
+     * 从redis中删除令牌
+     * @param access_token
+     * @return
+     */
+    public boolean delToken(String access_token) {
+        String name = "user_token:" + access_token;
+        stringRedisTemplate.delete(name);
+        return true;
     }
 }
