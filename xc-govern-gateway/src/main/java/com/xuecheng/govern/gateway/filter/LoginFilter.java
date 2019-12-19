@@ -3,6 +3,7 @@ package com.xuecheng.govern.gateway.filter;
 import com.alibaba.fastjson.JSON;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
+import com.netflix.zuul.exception.ZuulException;
 import com.xuecheng.framework.model.response.CommonCode;
 import com.xuecheng.framework.model.response.ResponseResult;
 import com.xuecheng.govern.gateway.service.AuthService;
@@ -39,8 +40,13 @@ public class LoginFilter extends ZuulFilter {
         return true; // 该过滤器需要执行
     }
 
+    /**
+     * run方法
+     * @return
+     * @throws ZuulException
+     */
     @Override
-    public Object run() {
+    public Object run() throws ZuulException {
         // 上下文对象
         RequestContext requestContext = RequestContext.getCurrentContext();
         // 请求对象
@@ -50,20 +56,30 @@ public class LoginFilter extends ZuulFilter {
         // 取出cookie中的身份令牌
         String tokenFromCookie = authService.getTokenFromCookie(request);
         if (StringUtils.isEmpty(tokenFromCookie)) {
-
+            // 拒绝访问
+            access_denied();
+            return null;
         }
-        if (StringUtils.isEmpty(tokenFromCookie)) {
-            requestContext.setSendZuulResponse(false); // 拒绝访问
-            requestContext.setResponseStatusCode(200); // 设置响应状态码
-            ResponseResult unauthenticated = new ResponseResult(CommonCode.UNAUTHENTICATED);
-            String jsonString = JSON.toJSONString(unauthenticated);
-            requestContext.setResponseBody(jsonString);
-            requestContext.getResponse().setContentType("application/json;charset=UTF-8");
+        // 从header取jwt
+        String jwtFromHeader = authService.getJwtFromHeader(request);
+        if (StringUtils.isEmpty(jwtFromHeader)) {
+            // 拒绝访问
+            access_denied();
+            return null;
+        }
+        // 从redis中取出jwt的过期时间
+        long expire = authService.getExpire(tokenFromCookie);
+        if (expire < 0) {
+            // 拒绝访问
+            access_denied();
             return null;
         }
         return null;
     }
 
+    /**
+     * 拒绝访问
+     */
     private void access_denied() {
         RequestContext requestContext = RequestContext.getCurrentContext();
         // 得到response
