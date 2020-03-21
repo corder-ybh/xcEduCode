@@ -9,7 +9,7 @@
         <version>1.0-SNAPSHOT</version>
         <relativePath>../xc-framework-parent/pom.xml</relativePath>
     </parent>
-    <artifactId>xc‐service‐manage‐cms</artifactId>
+    <artifactId>xc-service-manage-cms</artifactId>
 
     <dependencies>
         <dependency>

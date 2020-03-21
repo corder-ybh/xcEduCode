@@ -10,7 +10,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>xc‐service‐manage‐cms‐client</artifactId>
+    <artifactId>xc-service-manage-cms-client</artifactId>
 
     <dependencies>
         <dependency>
@@ -31,8 +31,9 @@
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>common-io</artifactId>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${org.apache.commons.io.version}</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
