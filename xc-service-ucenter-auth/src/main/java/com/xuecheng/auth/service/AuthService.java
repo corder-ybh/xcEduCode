@@ -133,6 +133,15 @@ public class AuthService {
             || null == map.get("access_token")
             || null == map.get("refresh_token")
             || null == map.get("jti")) { // jti 是jwt令牌的唯一标识作为用户身份令牌
+            // 登录失败提示优化
+            if  (null != map && null != map.get("error_description")) {
+                String errorDescription = (String)map.get("error_description");
+                if (errorDescription.indexOf("UserDetailsService returned null") >= 0) {
+                    ExceptionCast.cast(AuthCode.AUTH_ACCOUNT_NOTEXISTS);
+                } else if (errorDescription.indexOf("坏的凭证") >= 0) {
+                    ExceptionCast.cast(AuthCode.AUTH_CREDENTIAL_ERROR);
+                }
+            }
             ExceptionCast.cast(AuthCode.AUTH_LOGIN_ERROR);
         }
         AuthToken authToken = new AuthToken();
