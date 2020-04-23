@@ -62,7 +62,7 @@ public class PageService {
         //从gridFS中查询html文件
         InputStream inputStream = this.getFileById(htmlFileId);
         if (null == inputStream) {
-            // 要处理
+            // 要处理 使用ExceptionCast抛错？
             LOGGER.error("getFileById InputStream is null, htmlFileId:{}", htmlFileId);
             return;
         }
