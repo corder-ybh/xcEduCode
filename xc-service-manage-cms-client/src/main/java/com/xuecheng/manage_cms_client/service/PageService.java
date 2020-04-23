@@ -46,7 +46,8 @@ public class PageService {
     public void savePageToServerPath(String pageId) {
         Optional<CmsPage> optional = cmsPageRepository.findById(pageId);
         if (!optional.isPresent()) {
-            ExceptionCast.cast(CmsCode.CMS_PAGE_NOTEXISTS);
+            LOGGER.info("page is null");
+//            ExceptionCast.cast(CmsCode.CMS_PAGE_NOTEXISTS);
         }
         // 取出页面物理路径
         CmsPage cmsPage = optional.get();
@@ -54,7 +55,7 @@ public class PageService {
         CmsSite cmsSite = this.getCmsSiteById(cmsPage.getSiteId());
         //得到站点的物理路径
         //todo 不知道这是个什么鬼
-        String sitePhysicalPath = cmsSite.getSitePhysicalPath();
+        String sitePhysicalPath = ""; // cmsSite.getSitePhysicalPath();
         // 页面物理路径，现在直接存page的物理路径，就不要站点物理路径了
         String pagePath = sitePhysicalPath + cmsPage.getPagePhysicalPath() + cmsPage.getPageName();
         //得到html的文件id，从cmsPage中获取htmlFileId内容
