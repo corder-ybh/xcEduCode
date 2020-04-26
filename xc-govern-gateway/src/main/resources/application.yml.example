@@ -49,6 +49,11 @@ zuul:
       serviceId: xc-service-manage-cms
       strip-prefix: false
       sensitiveHeaders:
+	service-goods:
+      path: /goods/**
+      serviceId: xc-service-goods
+      strip-prefix: false
+      sensitiveHeaders:
     manage-sys:
       path: /sys/**
       serviceId: xc-service-manage-cms

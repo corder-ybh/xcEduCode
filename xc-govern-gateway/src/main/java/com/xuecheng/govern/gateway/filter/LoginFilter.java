@@ -34,10 +34,10 @@ public class LoginFilter extends ZuulFilter {
         return 2; // int值来定义过滤器的执行顺序，数值越小优先级越高
     }
 
-
+    // todo 登录过滤先关掉
     @Override
     public boolean shouldFilter() {
-        return true; // 该过滤器需要执行
+        return false; // 该过滤器需要执行
     }
 
     /**
