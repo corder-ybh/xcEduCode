@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/goods/category")
+@RequestMapping("/item/category")
 public class CategoryController implements CategoryControllerApi {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CategoryController.class);
