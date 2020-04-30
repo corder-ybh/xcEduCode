@@ -1,6 +1,8 @@
 package com.xuecheng.goods.service;
 
 import com.xuecheng.framework.domain.goods.*;
+import com.xuecheng.framework.domain.goods.request.QuerySpuRequest;
+import com.xuecheng.framework.model.response.QueryResponseResult;
 import com.xuecheng.goods.mapper.SkuMapper;
 import com.xuecheng.goods.mapper.SpuDetailMapper;
 import com.xuecheng.goods.mapper.SpuMapper;
@@ -63,5 +65,32 @@ public class GoodsService {
         spuBo.setSpuDetail(spuDetail);
         spuBo.setSkus(skuList);
         return spuBo;
+    }
+
+    /**
+     * 根据id获取spudetail
+     * @param id
+     * @return
+     */
+    public SpuDetail querySpuDetailBySpuId(Long id) {
+        return this.spuDetailMapper.selectByPrimaryKey(id);
+    }
+
+    /**
+     *
+     * @param page
+     * @param size
+     * @param querySpuRequest
+     * @return
+     */
+    public QueryResponseResult querySpuByPage(int page, int size, QuerySpuRequest querySpuRequest) {
+        if (page <= 0) {
+            page = 1;
+        }
+        page = page - 1;
+        if (size < 0) {
+            size = 20;
+        }
+        return null;
     }
 }
