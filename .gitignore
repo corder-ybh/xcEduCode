@@ -33,3 +33,4 @@ application.yml
 xc-service-manage-course/src/main/resources/publickey.txt
 xc-service-goods/target/
 xc-govern-gateway/tartet/
+xc-service-search/xc-service-search.iml
